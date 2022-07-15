@@ -84,7 +84,9 @@ function PSI.add_to_expression!(
     for d in devices, t in PSI.get_time_steps(container)
         name = PSY.get_name(d)
         for t1 in 1:t, r in 1:no_of_scenarios
-            PSI._add_to_jump_expression!(expression[name, t], variable[name, r, t1], 1.0)
+            if t1 < t
+                PSI._add_to_jump_expression!(expression[name, t], variable[name, r, t1], 1.0)
+            end
         end
     end
     return
@@ -159,7 +161,7 @@ function PSI.add_to_expression!(
 ) where {
     U <: PSI.ActivePowerVariable,
     V <: PSY.HybridSystem,
-    W <: HybridProbablisticDispatch,
+    W <: PSI.AbstractHybridFormulation,
     X <: PM.AbstractPowerModel,
 }
     variable = PSI.get_variable(container, U(), V)
@@ -202,8 +204,10 @@ function PSI.add_to_expression!(
     for d in devices, t in PSI.get_time_steps(container)
         name = PSY.get_name(d)
         for r in 1:no_of_scenarios
-            for t1 in 1:(t-1), r1 in r:no_of_scenarios[end]
-                PSI._add_to_jump_expression!(expression[name, r, t], variable[name, r, t1], 1.0)
+            for t1 in 1:t, r1 in r:no_of_scenarios
+                if t1 < t
+                    PSI._add_to_jump_expression!(expression[name, r, t], variable[name, r1, t1], 1.0)
+                end
             end
         end
     end

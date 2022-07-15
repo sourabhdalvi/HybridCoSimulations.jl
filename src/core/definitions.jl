@@ -11,3 +11,7 @@ function get_no_of_scenarios(devices::U
     end
     return no_of_scenarios
 end
+
+struct InitialEnergyHybrid <: PSI.InitialConditionType end
+
+struct InitialEnergyLevelHybrid <: PSI.InitialConditionType end
